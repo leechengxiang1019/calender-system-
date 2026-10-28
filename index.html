@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Chronos Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="auth" class="auth" hidden>
+  <div class="auth-card">
+    <div class="auth-top">
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12.5" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M16 9v7.5l5 3" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Chronos</div>
+      <button type="button" class="btn lang-btn" data-lang-toggle></button>
+    </div>
+    <p class="auth-sub" data-i18n="auth.sub"></p>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" id="tabIn" aria-selected="true" data-i18n="auth.in"></button>
+      <button type="button" role="tab" id="tabUp" aria-selected="false" data-i18n="auth.up"></button>
+    </div>
+    <form id="authForm" novalidate>
+      <div class="field" id="nameField" hidden><label for="a-name" data-i18n="auth.name"></label><input id="a-name" autocomplete="name"></div>
+      <div class="field"><label for="a-email" data-i18n="auth.email"></label><input id="a-email" type="email" autocomplete="email"></div>
+      <div class="field"><label for="a-pw" data-i18n="auth.pw"></label><input id="a-pw" type="password" autocomplete="current-password"></div>
+      <p class="ferr" id="authErr"></p>
+      <button class="btn primary wide" id="authSubmit"></button>
+    </form>
+    <p class="auth-demo"><span data-i18n="auth.demo"></span> <code>demo@chronos.app</code> / <code>chronos123</code> · <button type="button" class="link" id="useDemo" data-i18n="auth.fill"></button></p>
+    <p class="auth-note" data-i18n="auth.note"></p>
+  </div>
+</div>
+
+<div id="app" hidden>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12.5" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M16 9v7.5l5 3" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Chronos</div>
+      <nav class="nav" aria-label="Calendar navigation">
+        <button class="btn" id="todayBtn" data-i18n="nav.today"></button>
+        <button class="icon-btn plain" id="prevBtn" data-i18n-aria="nav.prev"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
+        <button class="icon-btn plain" id="nextBtn" data-i18n-aria="nav.next"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg></button>
+        <h1 class="range" id="rangeLabel" aria-live="polite"></h1>
+      </nav>
+      <div class="seg" role="group" aria-label="Calendar view">
+        <button data-view="day" data-i18n="view.day"></button>
+        <button data-view="week" data-i18n="view.week"></button>
+        <button data-view="month" data-i18n="view.month"></button>
+        <button data-view="list" data-i18n="view.list"></button>
+      </div>
+      <div class="tools">
+        <button type="button" class="btn lang-btn" data-lang-toggle></button>
+        <button type="button" class="icon-btn plain help-btn" data-help data-i18n-aria="menu.help"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10" cy="10" r="7.5"/><path d="M7.9 7.6a2.2 2.2 0 1 1 3.1 2c-.6.3-1 .8-1 1.4v.4"/><circle cx="10" cy="14" r=".6" fill="currentColor"/></svg></button>
+        <div class="user">
+          <button class="user-btn" id="userBtn" aria-haspopup="true" aria-expanded="false"><span class="avatar" id="avatar"></span><span class="user-name" id="userName"></span></button>
+          <div class="menu" id="userMenu" hidden>
+            <p><strong id="menuName"></strong><span id="menuEmail"></span></p>
+            <button id="newBtn2" data-i18n="menu.new"></button>
+            <button data-help data-i18n="menu.help"></button>
+            <button id="signOutBtn" data-i18n="menu.out"></button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="composer" aria-label="Add an event by typing a sentence">
+      <form id="quickForm" autocomplete="off">
+        <label class="q-input" for="quick">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M4 12h16M4 17h7"/><path d="M18 15v6M15 18h6"/></svg>
+          <input id="quick" data-i18n-ph="q.ph">
+          <kbd class="kbd-hint">/</kbd>
+        </label>
+        <button class="btn primary" type="submit" data-i18n="q.review"></button>
+        <button class="btn" type="button" id="newBtn" data-i18n="q.form"></button>
+      </form>
+      <div class="examples" id="examples"></div>
+      <div class="banner" id="sampleBanner" hidden><span data-i18n="banner"></span> <button class="btn" id="clearSamples" data-i18n="banner.rm"></button></div>
+    </section>
+
+    <div class="layout">
+      <aside class="side">
+        <section class="panel" aria-label="Month overview">
+          <div class="mini-h">
+            <strong id="miniLabel"></strong>
+            <span>
+              <button class="icon-btn plain" id="miniPrev" data-i18n-aria="nav.prev"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12.5 4.5 7 10l5.5 5.5"/></svg></button>
+              <button class="icon-btn plain" id="miniNext" data-i18n-aria="nav.next"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7.5 4.5 13 10l-5.5 5.5"/></svg></button>
+            </span>
+          </div>
+          <div class="mini" id="mini"></div>
+        </section>
+        <section class="panel">
+          <h3><span data-i18n="side.pri"></span> <span class="hint" data-i18n="side.sh"></span></h3>
+          <div class="plist" id="plist"></div>
+        </section>
+        <section class="panel">
+          <h3 data-i18n="side.up"></h3>
+          <ul class="up" id="upcoming"></ul>
+        </section>
+        <p class="tz" id="tzNote"></p>
+      </aside>
+      <main class="cal" id="cal" aria-live="polite"></main>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Event" hidden></aside>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4.4.1/dist/email.min.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/datetime.js"></script>
+<script src="js/parser.js"></script>
+<script src="js/scheduling.js"></script>
+<script src="js/email.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
